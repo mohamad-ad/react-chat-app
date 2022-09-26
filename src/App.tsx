@@ -1,25 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Chat from "./pages/Chat";
+import CompleteUserInformatio from './pages/CompleteUserInformatio';
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import Register from "./pages/Register";
+import AuthRequiredRoute from "./routes/AuthRequiredRoute";
+import NoAuthRoutes from "./routes/NoAuthRoutes";
+import './app.css'
+import Contacts from './pages/Contacts';
+import { useUsersContext } from './contexts/UsersContext';
+import UpdateUserInformation from './pages/UpdateUserInformation';
+
+
 
 function App() {
+  console.log("api key",process.env.REACT_APP_FIREBASE_API_KEY)
+  const {selectedUser} = useUsersContext();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route element={<AuthRequiredRoute />}>
+          <Route path='' element={selectedUser?<Chat/>:<Contacts/>}/>
+          <Route path='update' element={<UpdateUserInformation/>}/>
+
+        </Route>
+        <Route element={<NoAuthRoutes />}>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+        </Route>
+        <Route path='/complete' element={<CompleteUserInformatio/>}/>
+        <Route path='/*' element={<NotFound/>}/>
+      </Route>
+    </Routes>
   );
 }
 
